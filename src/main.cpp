@@ -405,8 +405,7 @@ void sendStatus() {
     return;
   }
   DLOG("Reporting packet Distance:%dmm ChargingState:%d Voltage:%dmV Current:%dmA Charge:%dmAh Capacity:%dmAh\n", roombaState.distance, roombaState.chargingState, roombaState.voltage, roombaState.current, roombaState.charge, roombaState.capacity);
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
+  StaticJsonDocument<200> root;
   root["battery_level"] = (roombaState.charge * 100)/roombaState.capacity;
   root["cleaning"] = roombaState.cleaning;
   root["docked"] = roombaState.docked;
@@ -417,7 +416,7 @@ void sendStatus() {
   root["current"] = roombaState.current;
   root["charge"] = roombaState.charge;
   String jsonStr;
-  root.printTo(jsonStr);
+  serializeJson(root, jsonStr);
   mqttClient.publish(statusTopic, jsonStr.c_str());
 }
 
